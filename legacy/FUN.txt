@@ -1,0 +1,6 @@
+A fun language means syntax that is unique, code that makes you feel as if
+you accomplished something while not being insanley hard to use. Weenies is made to provide
+a fun developer experience to anyone.
+
+(c) 2000 - Adam Stanley.
+Weenies is developed on SuSE Linux 6.4
