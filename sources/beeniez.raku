@@ -4,11 +4,12 @@
 use lib "sources/lib";
 use generator;
 grammar language {
-    token TOP { [<expr=.topexpr><semi>\n?]* }
-    token args { [(<arg>\,?)+] }
-    token arg { <num> | <string> | <expr> }
-    token topexpr { <func=.ident><args=.args> }
+    token TOP { [<expr=.topexpr><semi>\n? | \n]* }
+    token args { [(<arg>\,?<weeniespace>?)+] }
+    token arg { <num> | <string> | <expr> | <ident> }
+    token topexpr { <func=.ident><weeniespace>?<args=.args> }
     token expr { \([<expr=.topexpr>]*\) }
+    token weeniespace { \t|<space> }
     token ident { <alpha>+ }
     token semi { \; }
     token num { \-?\d+ }
@@ -28,8 +29,12 @@ grammar language {
 }
 
 
-sub MAIN($file) {
+sub MAIN($file, $dump = False) {
     my $fh = open $file, :r;
-    language.parse($fh.slurp, :actions(Language)).made;
+    if !$dump {
+        language.parse($fh.slurp, :actions(Language)).made;
+    } else {
+        say language.parse($fh.slurp);
+    }
     run "nqp", "out.nqp";
 }
