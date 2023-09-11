@@ -1,10 +1,10 @@
 #!/usr/bin/env raku
 
 # String parser stolen from https://modules.raku.org/dist/JSON::Tiny:cpan:MORITZ/lib/JSON/Tiny/Grammar.pm
-if !(%*ENV{"__BEENIEZ_PATH"}:exists) {
-    use lib "sources/lib";
+if %*ENV{"__BEENIEZ_PATH"}:exists and !(%*ENV{"__BEENIEZ_PATH"} ~~ Any) {
+    use lib %*ENV\{'__BEENIEZ_PATH'}.^name~"sources/lib";
 } else {
-    use lib %*ENV\{'__BEENIEZ_PATH'}~"sources/lib";
+    use lib "sources/lib";
 }
 use generator;
 grammar language {
