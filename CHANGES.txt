@@ -1,1 +1,3 @@
 Functions are entirely redesigned from the legacy version.
+
+legacy/SRC/FUNC.WEIN is broken. The new function system has replaced it.

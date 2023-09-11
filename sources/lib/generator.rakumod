@@ -25,13 +25,9 @@ class Language is export(:MANDATORY) {
         }
     }
     method print ($/, Bool $semi = True) {
-        if !($/<args>[0][0]<arg><expr> ~~ Nil) {
-            $out.print("say(");
-            self.construct($/<args>[0][0]<arg><expr>, False);
-            $out.print(ss(")",$semi));
-        } else {
-            $out.print(ss("say($($/<args>[0]))",$semi));
-        }
+        $out.print("say(");
+        self._arg($/<args>[0][0]);
+        $out.print(ss(")",$semi));
     }
     method add ($/, Bool $semi = True) {
         $out.print("(");
@@ -75,6 +71,11 @@ class Language is export(:MANDATORY) {
         }
         $out.print(ss(")",$semi));
     }
+    method var($/, Bool $semi = True) {
+        $out.print("my \$$($<args>[0][0]<arg><ident>):=");
+        self._arg($<args>[0][1]);
+        $out.print(ss("",$semi));
+    }
     method construct ($/, Bool $semi = True) {
         for $/<expr> -> $top {
             if $top<func> eq "p" {
@@ -88,13 +89,15 @@ class Language is export(:MANDATORY) {
             }
             elsif $top<func> eq "f" {
                 self.func($top, $semi);
+            } elsif $top<func> eq "v" {
+                self.var($top, $semi);
             }
             elsif %functions{$top<func>}:exists {
                 if %functions{$top<func>} ne $top<args>[0].elems {
                     say "Incorrect argument count when calling $($top<func>)";
                     exit 1;
                 }
-                self.call($top, $semi)
+                self.call($top, $semi);
             } else {
                 say "Unexpected token $top<func>";
                 exit 1;
