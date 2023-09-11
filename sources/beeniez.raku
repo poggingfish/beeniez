@@ -1,7 +1,11 @@
 #!/usr/bin/env raku
 
 # String parser stolen from https://modules.raku.org/dist/JSON::Tiny:cpan:MORITZ/lib/JSON/Tiny/Grammar.pm
-use lib "sources/lib";
+if !(%*ENV{"__BEENIEZ_PATH"}:exists) {
+    use lib "sources/lib";
+} else {
+    use lib %*ENV\{'__BEENIEZ_PATH'}~"sources/lib";
+}
 use generator;
 grammar language {
     token TOP { [<expr=.topexpr><semi>\n? | \n]* }
@@ -29,12 +33,22 @@ grammar language {
 }
 
 
-sub MAIN($file, $dump = False) {
+sub MAIN($file,
+    Bool :$dump, #= Dump the AST of the program to stdout
+    Str  :$outfile = "out.nqp", #= The output file for NQP.
+    Bool :$run = True, #= Run the program after compilation.
+    Bool :$delete = True #= Delete the output file after compilation.
+    ) {
     my $fh = open $file, :r;
     if !$dump {
         language.parse($fh.slurp, :actions(Language)).made;
     } else {
         say language.parse($fh.slurp);
     }
-    run "nqp", "out.nqp";
+    if $run {
+        run "nqp", $outfile;
+    }
+    if $delete {
+        run "rm", $outfile;
+    }
 }
