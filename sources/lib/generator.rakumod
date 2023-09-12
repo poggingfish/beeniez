@@ -16,11 +16,14 @@ class Language is export(:MANDATORY) {
     my %functions;
     method _arg ($/) {
         if !($/<arg><expr> ~~ Nil) {
-            self.construct($/<arg><expr>, False);
+            if !($/<arg><expr>[0]<arg> ~~ Nil) {
+                self._arg($/<arg><expr>[0]);
+            } else {
+                self.construct($/<arg><expr>, False);
+            }
         } elsif !($/<arg><ident> ~~ Nil) {
             $out.print("\$$($/<arg>)")
-        }
-        else {
+        } else {
             $out.print($/<arg>)
         }
     }
@@ -48,8 +51,17 @@ class Language is export(:MANDATORY) {
         # - Adam Stanley, 1996 (codegen.c)
 
         my $argc = 0;
-
-        $out.print("sub $($<args>[0][0]<arg>)\(");
+        my $fun_name = "";
+        if !( $<args>[0][0]<arg><string> ~~ Nil ) {
+            $out.print("sub $($<args>[0][0]<arg><string><str>)\(");
+            $fun_name = "$($<args>[0][0]<arg><string><str>)";
+        } elsif !( $<args>[0][0]<arg><ident> ~~ Nil ) {
+            $out.print("sub $($<args>[0][0]<arg>)\(");
+            $fun_name = "$($<args>[0][0]<arg>)";
+        } else {
+            say "Functions expect either an IDENT or STRING as their name.";
+            exit 1;
+        }
         for $<args>[0][1..*] -> $x {
             if !( $x<arg><ident> ~~ Nil ) {
                 $out.print("\$$($x<arg><ident>),");
@@ -60,7 +72,6 @@ class Language is export(:MANDATORY) {
                 $out.print("\}\n");
             }
         }
-        my $fun_name = "$($<args>[0][0]<arg>)";
         %functions{$fun_name} = $argc;
     }
     method call($/, Bool $semi = True) {

@@ -12,7 +12,7 @@ grammar language {
     token args { [(<arg>\,?<weeniespace>?)+] }
     token arg { <num> | <string> | <expr> | <ident> }
     token topexpr { <func=.ident><weeniespace>?<args=.args> }
-    token expr { \([<expr=.topexpr>]*\) }
+    token expr { \([[<expr=.topexpr>]*|(\^<arg=.arg>)]\) }
     token weeniespace { \t|<space> }
     token ident { <alpha>+ }
     token semi { \; }

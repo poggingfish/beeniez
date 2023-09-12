@@ -1,3 +1,1 @@
-Functions are entirely redesigned from the legacy version.
-
-legacy/SRC/FUNC.WEIN is broken. The new function system has replaced it.
+Functions are entirely redesigned from the legacy version. Legacy functions DO still work though

@@ -37,5 +37,6 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
     make_test("legacy/SRC/HI.WEIN","HI.\n");
     make_test("legacy/SRC/NUM.WEIN","10\n");
     make_test("legacy/SRC/VAR.WEIN","9\n");
+    make_test("legacy/SRC/FUNC.WEIN","5\n1\n");
     run_tests($suppress);
 }
