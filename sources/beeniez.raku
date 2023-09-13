@@ -41,8 +41,8 @@ grammar language does Grammar::PrettyErrors  {
 sub MAIN($file,
     Bool :$dump, #= Dump the AST of the program to stdout
     Str  :$outfile = "out.nqp", #= The output file for NQP.
-    Bool :$run = True, #= Run the program after compilation.
-    Bool :$delete = True #= Delete the output file after compilation.
+    Bool :$run, #= Run the program after compilation.
+    Bool :$delete #= Delete the output file after compilation.
     ) {
     my $fh = open $file, :r;
     my $g = language.new(:quiet, :colors, :lastrule);
