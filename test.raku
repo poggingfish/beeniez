@@ -33,6 +33,7 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
         exit 0;
     }
     make_test("SRC/func.bnz","3\n");
+    make_test("SRC/if.bnz","Equal!\nNot equal!\n");
     make_test("legacy/SRC/EXPR.WEIN","-2\n");
     make_test("legacy/SRC/HI.WEIN","HI.\n");
     make_test("legacy/SRC/NUM.WEIN","10\n");
