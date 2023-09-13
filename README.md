@@ -5,4 +5,4 @@
 
 #### Beeniez was a language created by developer Adam Stanley, I (fsh) am the new maintainer. I have decided to publish this language to the public.
 
-#### Beeniez is just a language standard. If a language can pass all tests in [test.raku] it is Beeniez.
+#### Beeniez is just a language standard. If a language can pass all tests in [test.raku](./test.raku) it is Beeniez.
