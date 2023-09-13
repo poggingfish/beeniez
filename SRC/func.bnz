@@ -1,1 +1,2 @@
-f"add_one",x,(a1,x);p(add_one2);
+f add_one x (a1,x);
+p(add_one2);

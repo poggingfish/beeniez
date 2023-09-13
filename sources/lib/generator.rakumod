@@ -56,15 +56,15 @@ class Language is export(:MANDATORY) {
             $out.print("sub $($<args>[0][0]<arg><string><str>)\(");
             $fun_name = "$($<args>[0][0]<arg><string><str>)";
         } elsif !( $<args>[0][0]<arg><ident> ~~ Nil ) {
-            $out.print("sub $($<args>[0][0]<arg>)\(");
-            $fun_name = "$($<args>[0][0]<arg>)";
+            $out.print("sub $($<args>[0][0]<arg><ident>)\(");
+            $fun_name = "$($<args>[0][0]<arg><ident>)";
         } else {
             say "Functions expect either an IDENT or STRING as their name.";
             exit 1;
         }
         for $<args>[0][1..*] -> $x {
             if !( $x<arg><ident> ~~ Nil ) {
-                $out.print("\$$($x<arg><ident>),");
+                self._arg($x);
                 $argc++;
             } else {
                 $out.print(")\{return ");
@@ -83,9 +83,11 @@ class Language is export(:MANDATORY) {
         $out.print(ss(")",$semi));
     }
     method var($/, Bool $semi = True) {
-        $out.print("my \$$($<args>[0][0]<arg><ident>):=");
+        $out.print("my ");
+        self._arg($<args>[0][0]);
+        $out.print(":=");
         self._arg($<args>[0][1]);
-        $out.print(ss("",$semi));
+        $out.print(ss("",$semi))
     }
     method if_($/, Bool $semi = True) {
         $out.print("if (");
@@ -102,7 +104,8 @@ class Language is export(:MANDATORY) {
         $out.print("}\n");
     }
     method set($/, Bool $semi = True) {
-        $out.print("\$$($<args>[0][0]<arg><ident>):=");
+        self._arg($<args>[0][0]);
+        $out.print(":=");
         self._arg($<args>[0][1]);
         $out.print(ss("",$semi))
     }

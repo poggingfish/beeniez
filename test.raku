@@ -11,7 +11,7 @@ sub run_tests($suppress_passed) {
     my $fail = 0;
     my $pass = 0;
     for %tests.keys -> $test {
-        my $result = run "sources/beeniez.raku", "$test", :out, :err;
+        my $result = run "sources/beeniez.raku", "--run", "$test", :out, :err;
         if ($result.out.slurp(:close) eq %tests{$test} and $result.err.slurp(:close) eq "") {
             if !$suppress_passed {
                 say "Test $test passed!";
