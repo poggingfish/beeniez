@@ -1,0 +1,9 @@
+v x 5;
+v y 5;
+if x, ==, y, (p"Equal!");
+else (p"Not equal!");
+
+sv x 5;
+sv y 4;
+if x, ==, y, (p"Equal!");
+else (p"Not equal!");

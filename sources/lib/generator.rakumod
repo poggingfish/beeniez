@@ -3,7 +3,6 @@ unit module generator;
 Beeniez codegen.
 =end overview
 
-
 sub ss($str,$semi) {
     my $newstr = "$str";
     if $semi {
@@ -87,6 +86,25 @@ class Language is export(:MANDATORY) {
         self._arg($<args>[0][1]);
         $out.print(ss("",$semi));
     }
+    method if_($/, Bool $semi = True) {
+        $out.print("if (");
+        self._arg($<args>[0][0]);
+        self._arg($<args>[0][1]);
+        self._arg($<args>[0][2]);
+        $out.print(")\{");
+        self.construct($/<args>[0][3]<arg><expr>, True);
+        $out.print("}\n");
+    }
+    method else_($/, Bool $semi = True) {
+        $out.print("else \{");
+        self.construct($/<args>[0][0]<arg><expr>, True);
+        $out.print("}\n");
+    }
+    method set($/, Bool $semi = True) {
+        $out.print("\$$($<args>[0][0]<arg><ident>):=");
+        self._arg($<args>[0][1]);
+        $out.print(ss("",$semi))
+    }
     method construct ($/, Bool $semi = True) {
         for $/<expr> -> $top {
             if $top<func> eq "p" {
@@ -102,6 +120,12 @@ class Language is export(:MANDATORY) {
                 self.func($top, $semi);
             } elsif $top<func> eq "v" {
                 self.var($top, $semi);
+            } elsif $top<func> eq "if" {
+                self.if_($top, $semi);
+            } elsif $top<func> eq "else" {
+                self.else_($top, $semi);
+            } elsif $top<func> eq "sv" {
+                self.set($top,$semi);
             }
             elsif %functions{$top<func>}:exists {
                 if %functions{$top<func>} ne $top<args>[0].elems {

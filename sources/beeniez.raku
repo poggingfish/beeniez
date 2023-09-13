@@ -7,14 +7,19 @@ if %*ENV{"__BEENIEZ_PATH"}:exists and !(%*ENV{"__BEENIEZ_PATH"} ~~ Any) {
     use lib "sources/lib";
 }
 use generator;
-grammar language {
-    token TOP { [<expr=.topexpr><semi>\n? | \n]* }
-    token args { [(<arg>\,?<weeniespace>?)+] }
-    token arg { <num> | <string> | <expr> | <ident> }
-    token topexpr { <func=.ident><weeniespace>?<args=.args> }
-    token expr { \([[<expr=.topexpr>]*|(\^<arg=.arg>)]\) }
+use Grammar::PrettyErrors;
+
+grammar language does Grammar::PrettyErrors  {
+    rule TOP { [<expr=.topexpr><semi>\n? % ' ' | \n]+ }
+    rule args { [(<arg>\,?<weeniespace>?)+] }
+    rule arg { <num> | <string> | <expr> | <ident> | <bool_op> }
+    rule topexpr { <func=.ident><weeniespace>?<args=.args> }
+    rule expr { \([[<expr=.topexpr>]*|(\^<arg=.arg>)]\) }
     token weeniespace { \t|<space> }
     token ident { <alpha>+ }
+    rule bool_op { [<eq=.eq> | <ne=.ne>] }
+    token eq { \=\= }
+    token ne { \!\= }
     token semi { \; }
     token num { \-?\d+ }
     token string {
@@ -40,10 +45,16 @@ sub MAIN($file,
     Bool :$delete = True #= Delete the output file after compilation.
     ) {
     my $fh = open $file, :r;
+    my $g = language.new(:quiet, :colors, :lastrule);
     if !$dump {
-        language.parse($fh.slurp, :actions(Language)).made;
+        my $parsed = $g.parse($fh.slurp, :actions(Language));
+        if $g.error {
+            say .report with $g.error;
+            exit 1;
+        }
+        $parsed.made;
     } else {
-        say language.parse($fh.slurp);
+        say $g.parse($fh.slurp);
     }
     if $run {
         run "nqp", $outfile;
