@@ -13,6 +13,7 @@ sub ss($str,$semi) {
 class Language is export(:MANDATORY) {
     my $out;
     my %functions;
+    has Str $.outfile = "out.nqp";
     method _arg ($/) {
         if !($/<arg><expr> ~~ Nil) {
             if !($/<arg><expr>[0]<arg> ~~ Nil) {
@@ -140,7 +141,7 @@ class Language is export(:MANDATORY) {
         }
     }
     method TOP ($/) {
-        $out = open "out.nqp", :w;
+        $out = open $!outfile, :w;
         self.construct(make $/);
         $out.close();
     }

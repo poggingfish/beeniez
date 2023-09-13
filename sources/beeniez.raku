@@ -46,8 +46,9 @@ sub MAIN($file,
     ) {
     my $fh = open $file, :r;
     my $g = language.new(:quiet, :colors, :lastrule);
+    my $compile = Language.new(outfile => $outfile);
     if !$dump {
-        my $parsed = $g.parse($fh.slurp, :actions(Language));
+        my $parsed = $g.parse($fh.slurp, :actions($compile));
         if $g.error {
             say .report with $g.error;
             exit 1;
