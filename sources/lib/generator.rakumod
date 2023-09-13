@@ -137,7 +137,7 @@ class Language is export(:MANDATORY) {
                     exit 1;
                 }
                 self.call($top, $semi);
-            } else {
+            } elsif $top<func> eq "c" {} else {
                 say "Unexpected token $top<func>";
                 exit 1;
             }
