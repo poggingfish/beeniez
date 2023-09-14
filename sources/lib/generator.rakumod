@@ -13,6 +13,7 @@ sub ss($str,$semi) {
 class Language is export(:MANDATORY) {
     my $out;
     my %functions;
+    my $fptr = 0;
     has Str $.outfile = "out.nqp";
     method _arg ($/) {
         if !($/<arg><expr> ~~ Nil) {
@@ -53,10 +54,10 @@ class Language is export(:MANDATORY) {
         my $argc = 0;
         my $fun_name = "";
         if !( $<args>[0][0]<arg><string> ~~ Nil ) {
-            $out.print("sub $($<args>[0][0]<arg><string><str>)\(");
+            $out.print("sub f$fptr\(");
             $fun_name = "$($<args>[0][0]<arg><string><str>)";
         } elsif !( $<args>[0][0]<arg><ident> ~~ Nil ) {
-            $out.print("sub $($<args>[0][0]<arg><ident>)\(");
+            $out.print("sub f$fptr\(");
             $fun_name = "$($<args>[0][0]<arg><ident>)";
         } else {
             say "Functions expect either an IDENT or STRING as their name.";
@@ -72,10 +73,12 @@ class Language is export(:MANDATORY) {
                 $out.print("\}\n");
             }
         }
-        %functions{$fun_name} = $argc;
+        $fptr++;
+        %functions{$fun_name} = [$argc, $fptr-1];
     }
     method call($/, Bool $semi = True) {
-        $out.print("$($<func>)\(");
+        my $func_name = %functions{$<func>};
+        $out.print("f$($func_name[1])\(");
         for $<args>[0] -> $arg {
             self._arg($arg);
             $out.print(",");
@@ -132,7 +135,7 @@ class Language is export(:MANDATORY) {
                 self.set($top,$semi);
             }
             elsif %functions{$top<func>}:exists {
-                if %functions{$top<func>} ne $top<args>[0].elems {
+                if %functions{$top<func>}[0] ne $top<args>[0].elems {
                     say "Incorrect argument count when calling $($top<func>)";
                     exit 1;
                 }

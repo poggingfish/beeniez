@@ -10,18 +10,20 @@ use generator;
 use Grammar::PrettyErrors;
 
 grammar language does Grammar::PrettyErrors  {
-    rule TOP { [<expr=.topexpr><semi>\n? % ' ' | \n]+ }
+    rule TOP { [<expr=.topexpr><semi>\n? % ' ' || \n]+ }
     rule args { [(<arg>\,?<weeniespace>?)+] }
-    rule arg { <num> | <string> | <expr> | <ident> | <bool_op> }
+    rule arg { <num> || <string> || <expr> || <ident> || <bool_op> }
     rule topexpr { <func=.ident><weeniespace>?<args=.args> }
-    rule expr { \([[<expr=.topexpr>]*|(\^<arg=.arg>)]\) }
-    token weeniespace { \t|<space> }
-    token ident { <alpha>+ }
-    rule bool_op { [<eq=.eq> | <ne=.ne>] }
+    rule expr { \([(\^<arg=.arg>) || <expr=.topexpr>*]\) }
+    token weeniespace { \t || <space> }
+    token ident { <identifier>+ }
+    rule bool_op { [<eq=.eq> || <ne=.ne>] }
     token eq { \=\= }
     token ne { \!\= }
     token semi { \; }
     token num { \-?\d+ }
+    token identifier { <alpha>|<unicodes> }
+    token unicodes { <[ \x[007F] .. \x[FFFF] ]> }
     token string {
         :ignoremark
         ('"') ~ \" [ <str> | \\ <str=.str_escape> ]*
