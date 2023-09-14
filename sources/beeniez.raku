@@ -11,10 +11,10 @@ use Grammar::PrettyErrors;
 
 grammar language does Grammar::PrettyErrors  {
     rule TOP { [<expr=.topexpr><semi>\n? % ' ' || \n]+ }
-    rule args { [(<arg>\,?<weeniespace>?)+] }
-    rule arg { <num> || <string> || <expr> || <ident> || <bool_op> }
+    rule args { [(<arg>\,?<weeniespace>?)*] }
+    rule arg { <num> || <string> || <expr> || <ident> || <bool_op> || \∅ }
     rule topexpr { <func=.ident><weeniespace>?<args=.args> }
-    rule expr { \([(\^<arg=.arg>) || <expr=.topexpr>*]\) }
+    rule expr { \([([\^|\∘]<arg=.arg>) || <expr=.topexpr>*]\) }
     token weeniespace { \t || <space> }
     token ident { <identifier>+ }
     rule bool_op { [<eq=.eq> || <ne=.ne>] }
