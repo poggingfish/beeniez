@@ -7,5 +7,6 @@ if $rc.e {
     say "No beeniezrc.";
     exit 1;
 }
-
-run %*ENV{"__BEENIEZ_PATH"}~"/sources/beeniez.raku", @*ARGS;
+try {
+    run %*ENV{"__BEENIEZ_PATH"}~"/sources/beeniez.raku", @*ARGS;
+}

@@ -41,5 +41,6 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
     make_test("legacy/SRC/FUNC.WEIN","5\n1\n");
     make_test("SRC/comment.bnz","I am not a comment\n");
     make_test("SRC/unicode.bnz","73\n");
+    make_test("SRC/use.bnz","6\n");
     run_tests($suppress);
 }

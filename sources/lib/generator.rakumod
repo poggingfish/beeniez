@@ -3,6 +3,9 @@ unit module generator;
 Beeniez codegen.
 =end overview
 
+use grammar;
+use Terminal::ANSIColor;
+
 sub ss($str,$semi) {
     my $newstr = "$str";
     if $semi {
@@ -140,6 +143,24 @@ class Language is export(:MANDATORY) {
                     exit 1;
                 }
                 self.call($top, $semi);
+            } elsif $top<func> eq "use" {
+                if ($top<args>[0][0]<arg><string> ~~ Nil) {
+                    say "Use expected a string!";
+                }
+                my $fh = open "$($top<args>[0][0]<arg><string><str>)", :r;
+                if !$fh {
+                    say color('bold'), color('red'), "FATAL: Failed to import $($top<args>[0][0]<arg><string><str>)", color('reset');
+                    exit 1;
+                }
+                my $g = language.new(:quiet, :colors, :lastrule);
+                my $parsed = $g.parse($fh.slurp());
+                if $g.error {
+                    say "In included module $($top<args>[0][0]<arg><string><str>)";
+                    say .report with $g.error;
+                    exit 1;
+                }
+                self.construct(make $parsed);
+
             } elsif $top<func> eq "c" {} else {
                 say "Unexpected token $top<func>";
                 exit 1;

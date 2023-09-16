@@ -7,38 +7,8 @@ if %*ENV{"__BEENIEZ_PATH"}:exists and !(%*ENV{"__BEENIEZ_PATH"} ~~ Any) {
     use lib "sources/lib";
 }
 use generator;
-use Grammar::PrettyErrors;
-
-grammar language does Grammar::PrettyErrors  {
-    rule TOP { [<expr=.topexpr><semi>\n? % ' ' || \n]+ }
-    rule args { [(<arg>\,?<weeniespace>?)*] }
-    rule arg { <num> || <string> || <expr> || <ident> || <bool_op> || \∅ }
-    rule topexpr { <func=.ident><weeniespace>?<args=.args> }
-    rule expr { \([([\^|\∘]<arg=.arg>) || <expr=.topexpr>*]\) }
-    token weeniespace { \t || <space> }
-    token ident { <identifier>+ }
-    rule bool_op { [<eq=.eq> || <ne=.ne>] }
-    token eq { \=\= }
-    token ne { \!\= }
-    token semi { \; }
-    token num { \-?\d+ }
-    token identifier { <alpha>|<unicodes> }
-    token unicodes { <[ \x[007F] .. \x[FFFF] ]> }
-    token string {
-        :ignoremark
-        ('"') ~ \" [ <str> | \\ <str=.str_escape> ]*
-    }
-    token str {
-        <-["\\\t\x[0A]]>+
-    }
-    token str_escape {
-        <["\\/bfnrt]> | 'u' <utf16_codepoint>+ % '\u'
-    }
-    token utf16_codepoint {
-        <.xdigit>**4
-    }
-}
-
+use grammar;
+use Terminal::ANSIColor;
 
 sub MAIN($file,
     Bool :$dump, #= Dump the AST of the program to stdout
@@ -47,6 +17,10 @@ sub MAIN($file,
     Bool :$delete #= Delete the output file after compilation.
     ) {
     my $fh = open $file, :r;
+    if !$fh {
+        say color('bold'), color('red'), "FATAL: Failed to open $file", color('reset');
+        exit 1;
+    }
     my $g = language.new(:quiet, :colors, :lastrule);
     my $compile = Language.new(outfile => $outfile);
     if !$dump {
