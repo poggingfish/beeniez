@@ -1,0 +1,16 @@
+image: alpine/edge
+secrets:
+  - 9948907a-8999-49c1-a7ce-885f91afdaae
+sources:
+  - git+ssh://git@git.sr.ht/~fsh/beeniez
+tasks:
+  - check: |
+      cd beeniez
+      if [ "$(git rev-parse origin/main)" != "$(git rev-parse HEAD)" ]; then \
+        complete-build; \
+      fi
+  - mirror: |
+      cd beeniez
+      git remote add github git@github.com:poggingfish/beeniez.git
+      ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+      git push github main
