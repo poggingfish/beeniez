@@ -6,11 +6,11 @@ sources:
 tasks:
   - check: |
       cd beeniez
-      if [ "$(git rev-parse origin/main)" != "$(git rev-parse HEAD)" ]; then \
+      if [ "$(git rev-parse origin/master)" != "$(git rev-parse HEAD)" ]; then \
         complete-build; \
       fi
   - mirror: |
       cd beeniez
       git remote add github git@github.com:poggingfish/beeniez.git
       ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-      git push github main
+      git push github master
