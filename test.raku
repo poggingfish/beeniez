@@ -42,5 +42,7 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
     make_test("SRC/comment.bnz","I am not a comment\n");
     make_test("SRC/unicode.bnz","73\n");
     make_test("SRC/use.bnz","6\n");
+    make_test("SRC/array.bnz","10\n");
+    make_test("SRC/pyramid.bnz","*\n**\n***\n****\n");
     run_tests($suppress);
 }

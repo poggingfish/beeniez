@@ -1,0 +1,4 @@
+v x [1,2,3,4];
+v sum 0;
+for x y (sv sum (a sum, y));
+p sum;

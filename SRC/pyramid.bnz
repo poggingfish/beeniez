@@ -1,0 +1,10 @@
+v x 0;
+while x < 4 {
+    v y 0;
+    while y <= x {
+        pₓ"*";
+        sv y (a y 1);
+    };
+    p"";
+    sv x (a x 1);
+};

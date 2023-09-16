@@ -26,13 +26,30 @@ class Language is export(:MANDATORY) {
                 self.construct($/<arg><expr>, False);
             }
         } elsif !($/<arg><ident> ~~ Nil) {
-            $out.print("\$$($/<arg>)")
-        } else {
+            $out.print("\$$($/<arg><ident>)")
+        } elsif !($/<arg><array> ~~ Nil) {
+            $out.print("[");
+            for $/<arg><array><args>[0] -> $arg {
+                self._arg($arg);
+                $out.print(",");
+            }
+            $out.print("]");
+        } elsif !($/<arg><cexpr> ~~ Nil) {
+            self.construct($/<arg><cexpr><TOP>, True);
+        } elsif !($/<arg><bool_op> ~~ Nil) {
+            $out.print(" $/<arg> ");
+        }
+        else {
             $out.print($/<arg>)
         }
     }
     method print ($/, Bool $semi = True) {
         $out.print("say(");
+        self._arg($/<args>[0][0]);
+        $out.print(ss(")",$semi));
+    }
+    method print_no_newline ($/, Bool $semi = True) {
+        $out.print("print(");
         self._arg($/<args>[0][0]);
         $out.print(ss(")",$semi));
     }
@@ -79,6 +96,12 @@ class Language is export(:MANDATORY) {
         $fptr++;
         %functions{$fun_name} = [$argc, $fptr-1];
     }
+    method idx($/, Bool $semi = True) {
+        self._arg($/<args>[0][0]);
+        $out.print("[");
+        self._arg($/<args>[0][1]);
+        $out.print(ss("]",$semi));
+    }
     method call($/, Bool $semi = True) {
         my $func_name = %functions{$<func>};
         $out.print("f$($func_name[1])\(");
@@ -115,10 +138,31 @@ class Language is export(:MANDATORY) {
         self._arg($<args>[0][1]);
         $out.print(ss("",$semi))
     }
+    method for_loop($/, Bool $semi = True) {
+        $out.print("for ");
+        self._arg($<args>[0][0]);
+        $out.print(" \{my ");
+        self._arg($<args>[0][1]);
+        $out.print(" := \$_;");
+        self._arg($<args>[0][2]);
+        $out.print("}\n");
+    }
+    method while_loop($/, Bool $semi = True) {
+        $out.print("while ");
+        self._arg($<args>[0][0]);
+        self._arg($<args>[0][1]);
+        self._arg($<args>[0][2]);
+        $out.print(" \{");
+        self._arg($<args>[0][3]);
+        $out.print(" \}\n");
+    }
     method construct ($/, Bool $semi = True) {
         for $/<expr> -> $top {
             if $top<func> eq "p" {
                 self.print($top, $semi);
+            }
+            elsif $top<func> eq "pₓ" {
+                self.print_no_newline($top, $semi);
             }
             elsif $top<func> eq "a" {
                 self.add($top, $semi);
@@ -136,8 +180,13 @@ class Language is export(:MANDATORY) {
                 self.else_($top, $semi);
             } elsif $top<func> eq "sv" {
                 self.set($top,$semi);
-            }
-            elsif %functions{$top<func>}:exists {
+            } elsif $top<func> eq "idx" {
+                self.idx($top,$semi);
+            } elsif $top<func> eq "for" {
+                self.for_loop($top,$semi);
+            } elsif $top<func> eq "while" {
+                self.while_loop($top,$semi);
+            } elsif %functions{$top<func>}:exists {
                 if %functions{$top<func>}[0] ne $top<args>[0].elems {
                     say "Incorrect argument count when calling $($top<func>)";
                     exit 1;

@@ -9,14 +9,14 @@ use Grammar::PrettyErrors;
 grammar language does Grammar::PrettyErrors is export(:MANDATORY) {
     rule TOP { [<expr=.topexpr><semi>\n? % ' ' || \n]+ }
     rule args { [(<arg>\,?<weeniespace>?)*] }
-    rule arg { <num> || <string> || <expr> || <ident> || <bool_op> || \∅ }
+    rule arg { <num> || <string> || <expr> || <ident> || <bool_op> || \∅ || <array> || <cexpr> }
+    rule array { \[<args>\] }
     rule topexpr { <func=.ident><weeniespace>?<args=.args> }
     rule expr { \([([\^|\∘]<arg=.arg>) || <expr=.topexpr>*]\) }
+    rule cexpr { \{\n?<weeniespace>+?<TOP>\} }
     token weeniespace { \t || <space> }
     token ident { <identifier>+ }
-    rule bool_op { [<eq=.eq> || <ne=.ne>] }
-    token eq { \=\= }
-    token ne { \!\= }
+    rule bool_op { [\=\= | \!\= | \< | \> | \>\= | \<\=] }
     token semi { \; }
     token num { \-?\d+ }
     token identifier { <alpha>|<unicodes> }
