@@ -187,7 +187,6 @@ class Language is export(:MANDATORY) {
         $out.print(ss("use $<args>[0][0]<arg><string><str>",$semi));
     }
     method use_func($/) {
-        $fptr++;
         %functions{"$<args>[0][2]"} = [+$<args>[0][1], $<args>[0][0]<arg><string>];
     }
     method construct ($/, Bool $semi = True) {
