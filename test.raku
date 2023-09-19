@@ -41,6 +41,6 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
     make_test("SRC/use.bnz","6\n");
     make_test("SRC/array.bnz","10\n");
     make_test("SRC/pyramid.bnz","*\n**\n***\n****\n");
-    make_test("SRC/std.bnz","[3,5,7]\n");
+    make_test("SRC/std.bnz","[3,5,7]\n1\n0\n1\n1\n");
     run_tests($suppress);
 }

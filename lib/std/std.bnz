@@ -1,3 +1,7 @@
 use_moar "std::std";
 uf "Std.map" 2 map;
 uf "Std.strList" 1 strList;
+uf "nqp::isstr" 1 isStr;
+uf "nqp::isnum" 1 isNum;
+uf "nqp::isint" 1 isInt;
+uf "nqp::islist" 1 isList;
