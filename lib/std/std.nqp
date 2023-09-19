@@ -25,5 +25,18 @@ my class Std is export {
         $str := $str~"]";
         return $str;
     }
-
+    method fOpen($filename,$open_as) {
+        my $fh := NQPFileHandle.new();
+        my $f := $fh.wrap(nqp::open($filename,$open_as));
+        return $f;
+    }
+    method fWrite($f, $str) {
+        $f.print($str);
+    }
+    method fRead($f) {
+        return $f.slurp();
+    }
+    method fClose($f) {
+        return $f.close();
+    }
 }

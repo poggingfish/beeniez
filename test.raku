@@ -45,5 +45,6 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
     make_test("SRC/std/strlist_map.bnz","[3,5,7]\n");
     make_test("SRC/std/pushpop.bnz","2\n");
     make_test("SRC/std/isType.bnz","1\n0\n1\n1\n");
+    make_test("SRC/std/file.bnz","sup!\n");
     run_tests($suppress);
 }

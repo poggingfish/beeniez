@@ -2,3 +2,4 @@
 .precomp
 *.moarvm
 .idea
+*.tmp

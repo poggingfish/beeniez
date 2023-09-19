@@ -1,0 +1,8 @@
+use "std/std.bnz";
+
+v fh (fOpen "pog.txt.tmp" "w");
+fWrite fh "sup!\n";
+fClose fh;
+sv fh (fOpen "pog.txt.tmp" "r");
+pₓ (fRead fh);
+fClose fh;

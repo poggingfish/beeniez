@@ -1,9 +1,14 @@
 use_moar "std::std";
 uf "Std.map" 2 map;
 uf "Std.strList" 1 strList;
+uf "Std.fOpen" 2 fOpen;
+uf "Std.fWrite" 2 fWrite;
+uf "Std.fClose" 1 fClose;
+uf "Std.fRead" 1 fRead;
 uf "nqp::isstr" 1 isStr;
 uf "nqp::isnum" 1 isNum;
 uf "nqp::isint" 1 isInt;
 uf "nqp::islist" 1 isList;
 uf "nqp::push" 2 push;
 uf "nqp::pop" 1 pop;
+uf "nqp::open" 2 fopen;
