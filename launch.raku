@@ -8,5 +8,5 @@ if $rc.e {
     exit 1;
 }
 try {
-    run %*ENV{"__BEENIEZ_PATH"}~"/sources/beeniez.raku", @*ARGS;
+    run "raku", %*ENV{"__BEENIEZ_PATH"}~"/sources/beeniez.raku", @*ARGS;
 }

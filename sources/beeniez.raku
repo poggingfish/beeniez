@@ -1,8 +1,7 @@
 #!/usr/bin/env raku
-
 # String parser stolen from https://modules.raku.org/dist/JSON::Tiny:cpan:MORITZ/lib/JSON/Tiny/Grammar.pm
 if %*ENV{"__BEENIEZ_PATH"}:exists and !(%*ENV{"__BEENIEZ_PATH"} ~~ Any) {
-    use lib %*ENV\{'__BEENIEZ_PATH'}.^name~"sources/lib";
+    use lib "/"~%*ENV\{'__BEENIEZ_PATH'}.gist~"/sources/lib";
 } else {
     use lib "sources/lib";
 }
@@ -34,7 +33,7 @@ sub MAIN($file,
         say $g.parse($fh.slurp);
     }
     if $run {
-        run "nqp", $outfile;
+        run "nqp", "--module-path=%*ENV{"__BEENIEZ_PATH"}/lib", $outfile;
     }
     if $delete {
         run "rm", $outfile;

@@ -9,7 +9,8 @@ use Grammar::PrettyErrors;
 grammar language does Grammar::PrettyErrors is export(:MANDATORY) {
     rule TOP { [<expr=.topexpr><semi>\n? % ' ' || \n]+ }
     rule args { [(<arg>\,?<weeniespace>?)*] }
-    rule arg { <num> || <string> || <expr> || <ident> || <bool_op> || \∅ || <array> || <cexpr> }
+    rule arg { <num> || <string> || <expr> || <fun> || <ident> || <bool_op> || <array> || <cexpr> }
+    token fun { \∫<ident> }
     rule array { \[<args>\] }
     rule topexpr { <func=.ident><weeniespace>?<args=.args> }
     rule expr { \([([\^|\∘]<arg=.arg>) || <expr=.topexpr>*]\) }

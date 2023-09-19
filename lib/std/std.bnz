@@ -1,0 +1,3 @@
+use_moar "std::std";
+uf "Std.map" 2 map;
+uf "Std.strList" 1 strList;

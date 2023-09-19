@@ -38,6 +38,15 @@ class Language is export(:MANDATORY) {
             self.construct($/<arg><cexpr><TOP>, True);
         } elsif !($/<arg><bool_op> ~~ Nil) {
             $out.print(" $/<arg> ");
+        } elsif !($/<arg><fun> ~~ Nil) {
+            $out.print("\&");
+            my $func_name = %functions{$<arg><fun><ident>};
+            # TODO: Find a better way to do this..
+            if !("$($func_name[1].^name)" eq "Int") {
+                $out.print("$($func_name[1]<str>)");
+            } else {
+                $out.print("f$($func_name[1])");
+            }
         }
         else {
             $out.print($/<arg>)
@@ -64,6 +73,20 @@ class Language is export(:MANDATORY) {
         $out.print("(");
         self._arg($/<args>[0][0]);
         $out.print("-");
+        self._arg($/<args>[0][1]);
+        $out.print(")");
+    }
+    method mul ($/, Bool $semi = True) {
+        $out.print("(");
+        self._arg($/<args>[0][0]);
+        $out.print("*");
+        self._arg($/<args>[0][1]);
+        $out.print(")");
+    }
+    method div ($/, Bool $semi = True) {
+        $out.print("(");
+        self._arg($/<args>[0][0]);
+        $out.print("/");
         self._arg($/<args>[0][1]);
         $out.print(")");
     }
@@ -104,7 +127,11 @@ class Language is export(:MANDATORY) {
     }
     method call($/, Bool $semi = True) {
         my $func_name = %functions{$<func>};
-        $out.print("f$($func_name[1])\(");
+        if !($func_name[1]<str> ~~ Nil) {
+            $out.print("$($func_name[1]<str>)\(");
+        } else {
+            $out.print("f$($func_name[1])\(");
+        }
         for $<args>[0] -> $arg {
             self._arg($arg);
             $out.print(",");
@@ -156,6 +183,13 @@ class Language is export(:MANDATORY) {
         self._arg($<args>[0][3]);
         $out.print(" \}\n");
     }
+    method use_moar($/, Bool $semi = True) {
+        $out.print(ss("use $<args>[0][0]<arg><string><str>",$semi));
+    }
+    method use_func($/) {
+        $fptr++;
+        %functions{"$<args>[0][2]"} = [+$<args>[0][1], $<args>[0][0]<arg><string>];
+    }
     method construct ($/, Bool $semi = True) {
         for $/<expr> -> $top {
             if $top<func> eq "p" {
@@ -169,6 +203,12 @@ class Language is export(:MANDATORY) {
             }
             elsif $top<func> eq "s" {
                 self.sub($top, $semi);
+            }
+            elsif $top<func> eq "d" {
+                self.div($top, $semi);
+            }
+            elsif $top<func> eq "m" {
+                self.mul($top, $semi);
             }
             elsif $top<func> eq "f" {
                 self.func($top, $semi);
@@ -192,14 +232,24 @@ class Language is export(:MANDATORY) {
                     exit 1;
                 }
                 self.call($top, $semi);
-            } elsif $top<func> eq "use" {
+            } elsif $top<func> eq "use_moar" {
+                self.use_moar($top, $semi);
+            } elsif $top<func> eq "uf" {
+                self.use_func($top);
+            }
+            # TODO: Put use in a separate function
+            elsif $top<func> eq "use" {
                 if ($top<args>[0][0]<arg><string> ~~ Nil) {
                     say "Use expected a string!";
                 }
                 my $fh = open "$($top<args>[0][0]<arg><string><str>)", :r;
                 if !$fh {
-                    say color('bold'), color('red'), "FATAL: Failed to import $($top<args>[0][0]<arg><string><str>)", color('reset');
-                    exit 1;
+                    $fh = open "%*ENV{"HOME"}/.beeniez/lib/$top<args>[0][0]<arg><string><str>", :r;
+                    if !$fh {
+                        say color('bold'), color('red'),
+                        "FATAL: Failed to import $($top<args>[0][0]<arg><string><str>)", color('reset');
+                        exit 1;
+                    }
                 }
                 my $g = language.new(:quiet, :colors, :lastrule);
                 my $parsed = $g.parse($fh.slurp());

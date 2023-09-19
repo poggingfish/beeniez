@@ -1,2 +1,4 @@
 *.nqp
 .precomp
+*.moarvm
+.idea

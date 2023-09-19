@@ -11,7 +11,7 @@ sub run_tests($suppress_passed) {
     my $fail = 0;
     my $pass = 0;
     for %tests.keys -> $test {
-        my $result = run "sources/beeniez.raku", "--run", "$test", :out, :err;
+        my $result = run "beeniez", "--run", "$test", :out, :err;
         if ($result.out.slurp(:close) eq %tests{$test} and $result.err.slurp(:close) eq "") {
             if !$suppress_passed {
                 say "Test $test passed!";
@@ -41,5 +41,6 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
     make_test("SRC/use.bnz","6\n");
     make_test("SRC/array.bnz","10\n");
     make_test("SRC/pyramid.bnz","*\n**\n***\n****\n");
+    make_test("SRC/std.bnz","[3,5,7]\n");
     run_tests($suppress);
 }
