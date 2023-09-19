@@ -5,3 +5,5 @@ uf "nqp::isstr" 1 isStr;
 uf "nqp::isnum" 1 isNum;
 uf "nqp::isint" 1 isInt;
 uf "nqp::islist" 1 isList;
+uf "nqp::push" 2 push;
+uf "nqp::pop" 1 pop;

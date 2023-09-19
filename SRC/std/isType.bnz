@@ -1,7 +1,4 @@
 use "std/std.bnz";
-f x y (a y 1);
-f y z (m 2 z);
-p (strList (map ∫x (map ∫y [1,2,3])));
 p (isStr "Hi!");
 p (isList "Hi!");
 p (isInt 16);

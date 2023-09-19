@@ -14,13 +14,14 @@ sub run_tests($suppress_passed) {
         my $result = run "beeniez", "--run", "$test", :out, :err;
         if ($result.out.slurp(:close) eq %tests{$test} and $result.err.slurp(:close) eq "") {
             if !$suppress_passed {
-                say "Test $test passed!";
+                say "[$($fail+$pass+1)/$(%tests.elems)] $test \e[0;32mpassed!";
             }
             $pass++;
         } else {
-            say "Test $test failed!";
+            say "[$($fail+$pass+1)/$(%tests.elems)] $test \e[1;31mfailed!";
             $fail++;
         }
+        print("\e[0m");
     }
     say "$pass/$($pass+$fail) tests passed."
 }
@@ -41,6 +42,8 @@ sub MAIN(Bool :$suppress, #= Suppress passes.
     make_test("SRC/use.bnz","6\n");
     make_test("SRC/array.bnz","10\n");
     make_test("SRC/pyramid.bnz","*\n**\n***\n****\n");
-    make_test("SRC/std.bnz","[3,5,7]\n1\n0\n1\n1\n");
+    make_test("SRC/std/strlist_map.bnz","[3,5,7]\n");
+    make_test("SRC/std/pushpop.bnz","2\n");
+    make_test("SRC/std/isType.bnz","1\n0\n1\n1\n");
     run_tests($suppress);
 }
